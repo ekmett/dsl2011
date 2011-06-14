@@ -20,6 +20,36 @@ import Control.Monad.Trans
 
 infixl 6 .*, ./
 
+newtype Linear p a = Linear { runLinear :: [(p,a)] } 
+  deriving (Read,Show)
+
+d :: Eval v => v a -> Scalar v
+d = foldl' (\b pa -> b + abs (fst pa)) 0 . flatten
+
+instance Num p => Functor (Linear p) where
+  fmap f (Linear as) = Linear [ (p, f a) | (p,a) <- as ]
+  b <$ as = Linear [(d as, b)]
+
+instance Num p => Applicative (Linear p) where
+  pure a = Linear [(1, a)]
+  Linear fs <*> Linear as = Linear [(p*q,f a) | (p,f) <- fs, (q,a) <- as]
+  as <* bs = d bs .* as
+  as *> bs = d as .* bs
+  
+instance Num p => Alternative (Linear p) where
+  empty = Linear []
+  Linear as <|> Linear bs = Linear (as <|> bs)
+
+instance Num p => Monad (Linear p) where
+  return a = Linear [(1, a)]
+  (>>) = (*>)
+  Linear as >>= f = Linear [ (p*q, b) | (p,a) <- as, (q,b) <- runLinear (f a) ]
+
+instance Num p => MonadPlus (Linear p) where
+  mzero = empty
+  mplus = (<|>)
+
+
 class (Alternative v, MonadPlus v, Num (Scalar v)) => Vector v where
   type Scalar v :: *
   (.*) :: Scalar v -> v a -> v a
@@ -64,36 +94,6 @@ instance Eval v => Eval (Codensity v) where
 
 optimize :: (Eval v, Ord a) => v a -> v a
 optimize = linear_ . eval
-
--- | conservative upper bound on the L1 norm. Accurate If all vectors are non-negative.
-d :: Eval v => v a -> Scalar v
-d = foldl' (\b pa -> b + abs (fst pa)) 0 . flatten
-
-newtype Linear p a = Linear { runLinear :: [(p,a)] } 
-  deriving (Read,Show)
-
-instance Num p => Functor (Linear p) where
-  fmap f (Linear as) = Linear [ (p, f a) | (p,a) <- as ]
-  b <$ as = Linear [(d as, b)]
-
-instance Num p => Applicative (Linear p) where
-  pure a = Linear [(1, a)]
-  Linear fs <*> Linear as = Linear [(p*q,f a) | (p,f) <- fs, (q,a) <- as]
-  as <* bs = d bs .* as
-  as *> bs = d as .* bs
-  
-instance Num p => Alternative (Linear p) where
-  empty = Linear []
-  Linear as <|> Linear bs = Linear (as <|> bs)
-
-instance Num p => Monad (Linear p) where
-  return a = Linear [(1, a)]
-  (>>) = (*>)
-  Linear as >>= f = Linear [ (p*q, b) | (p,a) <- as, (q,b) <- runLinear (f a) ]
-
-instance Num p => MonadPlus (Linear p) where
-  mzero = empty
-  mplus = (<|>)
 
 instance Num p => Vector (Linear p) where
   type Scalar (Linear p) = p

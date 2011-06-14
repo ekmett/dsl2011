@@ -97,7 +97,7 @@ find c@(Cline p a b k) constraints = cline c $ optimize (sum . map (^2) . constr
 
 steps = 50
 
-optimize :: Traversable f => (forall s. Mode s => f (Unknown s) -> Unknown s) -> f Double -> f Double
+optimize :: (forall s. Mode s => C (Unknown s) -> Unknown s) -> C Double -> C Double
 optimize f guess = gradientDescent f guess `near` steps where
   near [] _ = guess
   near [x] n = x
@@ -106,7 +106,7 @@ optimize f guess = gradientDescent f guess `near` steps where
 
 {-
 cline1 :: Cline Double
-cline1 = find guess1 $ satisfying
+cline1 = find (clockwise_circle 0 0 1) $ satisfying
   [ passing_through x1 y1
   , passing_through x2 y2
   , clockwise_radius r
