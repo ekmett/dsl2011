@@ -1,0 +1,22 @@
+Day 1
+
+ 9:00- 9:30 Getting Organized
+ 9:30-10:00 What is a DSL? (Edward Kmett)
+10:00-10:30 Smoothing Probabilities in Haskell (Wren Thornton)
+10:30-12:00 Lenses in Scala (Edward Kmett)
+12:00- 1:00 Break
+ 1:00- 2:00 Forward-Mode Automatic Differentiation in Haskell (Edward Kmett)
+ 2:00- 2:30 Building Train Tracks with AD in Haskell (Edward Kmett)
+ 2:30- 3:30 Dependency Tracking in Java / What is a Monad? (Wren Thornton)
+ 3:30- 4:00 Questions & Wrap Up
+
+Day 2
+
+ 9:00-10:00 Introduction to HOAS (Wren Thornton)
+10:00-11:00 Free Monads and Codensity / Quantum Probability (Edward Kmett)
+11:00-12:00 Unification & Data Types a la Carte (Wren Thornton)
+12:00- 1:00 Break
+ 1:00- 2:00 Observable Sharing in Circuits and Reverse-Mode AD (Edward Kmett)
+ 2:00- 3:00 Demonstration (Indellient)
+ 3:00- 3:30 Finally Tagless Encodings (Edward Kmett)
+ 3:30- 4:00 Template Haskell for DSLs (Edward Kmett)
